@@ -5,9 +5,10 @@ import passport from 'passport';
 import session from 'express-session';
 import { BasicStrategy } from 'passport-http';
 
-import config from '../lib/config';
+import config from '../../lib/config';
+import { getUser } from '../../lib/db/users';
 
-const PORT = config.PORT;
+const PORT = config.AUTH_PORT;
 
 const app = express();
 
@@ -18,10 +19,12 @@ app.use(express.static("public"));
 app.use(session({ secret: "cats" }));
 
 passport.use(new BasicStrategy(
-  (username: string, password: string, done: Function) => {
+  async (username: string, password: string, done: Function) => {
     console.log({ username, password, done})
-    return done(null, { username, password })
-    return done(null, false, { message: 'Invalid username or password.' });
+    const result: any = await getUser({ username, password });
+    console.log({ result })
+    return done(null, { uid: result.uid })
+    // return done(null, false, { message: 'Invalid username or password.' });
   }
 ))
 
@@ -29,9 +32,7 @@ passport.serializeUser((user: any, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user: any, done) => {
-  done(null, user);
-});
+passport.deserializeUser((user: any, done) => done(null, user));
 
 app.use(passport.initialize());
 app.use(passport.session());
