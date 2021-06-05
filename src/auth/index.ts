@@ -7,8 +7,8 @@ import { BasicStrategy } from 'passport-http';
 
 import config from '../lib/config';
 import { getUser } from '../lib/db/users';
-import tokenService from './services';
-console.log({ tokenService })
+import services from './services';
+
 const PORT = config.AUTH_PORT;
 
 const app = express();
@@ -45,22 +45,17 @@ passport.deserializeUser((user: any, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', (req: Request, res: Response, next) => {
-  res.status(200).send('Hello world');
-});
-
-app.get('/unauthorized', (req: Request, res: Response, next) => {
-  res.status(401).send();
-});
-
 app.get('/token', 
   passport.authenticate('basic', { session: false }),
   (req: Request, res: Response, next) => {
-  console.log(req.user)
+  const payload = req.user;
+  console.log({ payload });
+  const { generateAccessToken, generateRefreshToken, getAccessTokenExpires } = services;
+
   res.status(200).send({
-    access_token: 'test',//generateToken(req.user),
-    refresh_token: 'test',
-    expires_in: 123,
+    access_token: generateAccessToken(payload),
+    refresh_token: generateRefreshToken(payload),
+    expires_in: getAccessTokenExpires(),
     token_type: 'bearer'
   });
 });

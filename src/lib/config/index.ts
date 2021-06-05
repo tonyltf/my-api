@@ -18,7 +18,7 @@ export default {
 
   AUTH: {
     ACCESS_TOKEN_SECRET: env.AUTH_ACCESS_TOKEN_SECRET || 'access',
-    REFERSH_TOKEN_SECRET: env.AUTH_REFERSH_TOKEN_SECRET || 'refresh',
+    REFRESH_TOKEN_SECRET: env.AUTH_REFRESH_TOKEN_SECRET || 'refresh',
     EXPIRES_IN: env.AUTH_EXPIRES_IN || 3600,
   },
 
