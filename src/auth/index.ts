@@ -5,9 +5,10 @@ import passport from 'passport';
 import session from 'express-session';
 import { BasicStrategy } from 'passport-http';
 
-import config from '../../lib/config';
-import { getUser } from '../../lib/db/users';
-
+import config from '../lib/config';
+import { getUser } from '../lib/db/users';
+import tokenService from './services';
+console.log({ tokenService })
 const PORT = config.AUTH_PORT;
 
 const app = express();
@@ -20,10 +21,17 @@ app.use(session({ secret: "cats" }));
 
 passport.use(new BasicStrategy(
   async (username: string, password: string, done: Function) => {
-    console.log({ username, password, done})
-    const result: any = await getUser({ username, password });
-    console.log({ result })
-    return done(null, { uid: result.uid })
+    try {
+
+      const result: any = await getUser({ username, password });
+      console.log({ result })
+      if (result) {
+        return done(null, { uid: result.uid })
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return done(null, false);
     // return done(null, false, { message: 'Invalid username or password.' });
   }
 ))
@@ -50,7 +58,7 @@ app.get('/token',
   (req: Request, res: Response, next) => {
   console.log(req.user)
   res.status(200).send({
-    access_token: 'test',
+    access_token: 'test',//generateToken(req.user),
     refresh_token: 'test',
     expires_in: 123,
     token_type: 'bearer'

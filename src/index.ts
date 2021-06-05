@@ -5,7 +5,7 @@ import passport from 'passport';
 import session from 'express-session';
 import { BasicStrategy } from 'passport-http';
 
-import config from '../lib/config';
+import config from './lib/config';
 
 const PORT = config.PORT;
 
@@ -23,7 +23,7 @@ passport.use(new BasicStrategy(
     return done(null, { username, password })
     return done(null, false, { message: 'Invalid username or password.' });
   }
-))
+));
 
 passport.serializeUser((user: any, done) => {
   done(null, user);

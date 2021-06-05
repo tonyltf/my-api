@@ -1,5 +1,4 @@
-import { Knex } from 'knex';
-import db from './';
+import db from '.';
 
 interface UserId {
   uid: number;
