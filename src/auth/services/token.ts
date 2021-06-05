@@ -33,7 +33,7 @@ const TokenService = ((logger: any) => {
       logger?.error(e);
       // throw new HttpError(HTTP_STATUS.UNAUTHORIZED, 'invalid refresh token', { info: 'invalid refresh token' });
     }
-  }
+  };
 
   return {
     generateAccessToken,
@@ -46,7 +46,3 @@ const TokenService = ((logger: any) => {
 });
 
 export default TokenService;
-
-return {
-  return {
-    return {

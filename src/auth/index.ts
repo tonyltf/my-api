@@ -50,14 +50,9 @@ app.get('/token',
   (req: Request, res: Response, next) => {
   const payload = req.user;
   console.log({ payload });
-  const { generateAccessToken, generateRefreshToken, getAccessTokenExpires } = services;
+  const { generateToken} = services;
 
-  res.status(200).send({
-    access_token: generateAccessToken(payload),
-    refresh_token: generateRefreshToken(payload),
-    expires_in: getAccessTokenExpires(),
-    token_type: 'bearer'
-  });
+  res.status(200).send(generateToken(payload));
 });
 
 app.post('/login',
