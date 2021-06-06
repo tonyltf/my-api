@@ -63,16 +63,17 @@ app.post('/register', async (req: Request, res: Response, next) => {
 
     const { username, password } = req.body;
     const { createAccount } = services;
-    const result = await createAccount({ username, password });
-    
-    if (result) {
-      res.status(200).send({ success: true })
-    } else {
-      res.status(400).send({ success: false });
+
+    if (username && password) {
+      const result = await createAccount({ username, password });
+      if (result) {
+        res.status(200).send({ success: true })
+      } 
     }
   } catch (e) {
     res.status(500).send();
   }
+  res.status(400).send({ success: false });
 
 });
 
