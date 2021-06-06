@@ -45,18 +45,36 @@ passport.deserializeUser((user: any, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.post('/login',
+  passport.authenticate('basic', { successRedirect: '/token' }));
+
 app.get('/token', 
   passport.authenticate('basic', { session: false }),
   (req: Request, res: Response, next) => {
   const payload = req.user;
   console.log({ payload });
-  const { generateToken} = services;
+  const { generateToken } = services;
 
   res.status(200).send(generateToken(payload));
 });
 
-app.post('/login',
-  passport.authenticate('basic', { successRedirect: '/token' }));
+app.post('/register', async (req: Request, res: Response, next) => {
+  try {
+
+    const { username, password } = req.body;
+    const { createAccount } = services;
+    const result = await createAccount({ username, password });
+    
+    if (result) {
+      res.status(200).send({ success: true })
+    } else {
+      res.status(400).send({ success: false });
+    }
+  } catch (e) {
+    res.status(500).send();
+  }
+
+});
 
 app.listen(PORT, () => {
   console.log(`Listening to port ${PORT}`);
