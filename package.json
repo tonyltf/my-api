@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev:auth": "ts-node-dev --respawn --transpile-only src/auth/index.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "auth": "node dist/auth/"
@@ -22,6 +23,8 @@
     "@types/node": "^15.12.0",
     "@types/passport-http": "^0.3.8",
     "@types/passport-local": "^1.0.33",
+    "husky": "^6.0.0",
+    "pretty-quick": "^3.1.0",
     "ts-node": "^10.0.0",
     "ts-node-dev": "^1.1.6",
     "tslint": "^6.1.3",
