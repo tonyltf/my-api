@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import passport from 'passport';
 import session from 'express-session';
 import { BasicStrategy } from 'passport-http';
+import morgan from 'morgan';
 
 import config from '../lib/config';
 import { getUser } from '../lib/db/users';
@@ -15,6 +16,7 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.static('public'));
 app.use(session({ secret: 'cats' }));
@@ -45,9 +47,13 @@ app.use(passport.session());
 app.post('/login', passport.authenticate('basic', { successRedirect: '/token' }));
 
 app.get('/token', passport.authenticate('basic', { session: false }), (req: Request, res: Response, next) => {
-  const payload = req.user;
-  const { generateToken } = services;
-  res.status(200).send(generateToken(payload));
+  try{
+    const payload = req.user;
+    const { generateToken } = services;
+    res.status(200).send(generateToken(payload));
+  } catch (e) {
+    res.status(500).send();
+  }
 });
 
 app.post('/register', async (req: Request, res: Response, next) => {
