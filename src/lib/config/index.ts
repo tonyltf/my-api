@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { AUTH_ACCESS_TOKEN_SECRET, AUTH_REFRESH_TOKEN_SECRET } from './auth';
 
 dotenv.config();
 
@@ -17,11 +18,11 @@ export default {
   },
 
   AUTH: {
-    ACCESS_TOKEN_SECRET: env.AUTH_ACCESS_TOKEN_SECRET || 'access',
-    REFRESH_TOKEN_SECRET: env.AUTH_REFRESH_TOKEN_SECRET || 'refresh',
+    ACCESS_TOKEN_SECRET: env.AUTH_ACCESS_TOKEN_SECRET || AUTH_ACCESS_TOKEN_SECRET,
+    REFRESH_TOKEN_SECRET: env.AUTH_REFRESH_TOKEN_SECRET || AUTH_REFRESH_TOKEN_SECRET,
     EXPIRES_IN: env.AUTH_EXPIRES_IN || 3600,
   },
 
   PORT: env.PORT || 8000,
-  AUTH_PORT: env.PORT || 8001,
+  AUTH_PORT: env.AUTH_PORT || 8001,
 };
