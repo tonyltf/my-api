@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import config from '../../lib/config';
 
-const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EXPIRES_IN } = config.AUTH;
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, EXPIRES_IN, REFRESH_EXPIRES_IN, TOKEN_TYPE } = config.AUTH;
 
 const TokenService = ((logger: any) => {
 
@@ -10,17 +10,15 @@ const TokenService = ((logger: any) => {
     expiresIn: EXPIRES_IN
   });
 
-  const getAccessTokenExpires = () => EXPIRES_IN;
-
   const generateRefreshToken = (payload: any) => jwt.sign(payload, REFRESH_TOKEN_SECRET, {
-    expiresIn: '7d'
+    expiresIn: REFRESH_EXPIRES_IN
   });
 
   const generateToken = (payload: any) => ({
     access_token: generateAccessToken(payload),
     refresh_token: generateRefreshToken(payload),
-    expires_in: getAccessTokenExpires(),
-    token_type: 'bearer'
+    expires_in: EXPIRES_IN,
+    token_type: TOKEN_TYPE
   });
 
   const refreshToken = (refreshToken: string) => {
@@ -38,8 +36,6 @@ const TokenService = ((logger: any) => {
   return {
     generateAccessToken,
     generateRefreshToken,
-    getAccessTokenExpires,
-
     generateToken,
     refreshToken,
   }

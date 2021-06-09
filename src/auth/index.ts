@@ -9,6 +9,8 @@ import morgan from 'morgan';
 import config from '../lib/config';
 import { getUser } from '../lib/db/users';
 import services from './services';
+import { GrantType, HTTP_STATUS } from '../lib/constant';
+import { HttpError } from '../lib/error';
 
 const PORT = config.AUTH_PORT;
 
@@ -44,15 +46,15 @@ passport.deserializeUser((user: any, done) => done(null, user));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post('/login', passport.authenticate('basic', { successRedirect: '/token' }));
+app.post('/login', passport.authenticate('basic', { successRedirect: '/loggedIn' }));
 
-app.get('/token', passport.authenticate('basic', { session: false }), (req: Request, res: Response, next) => {
+app.get('/loggedIn', passport.authenticate('basic', { session: false }), (req: Request, res: Response, next) => {
   try{
     const payload = req.user;
     const { generateToken } = services;
-    res.status(200).send(generateToken(payload));
+    res.status(HTTP_STATUS.OK).send(generateToken(payload));
   } catch (e) {
-    res.status(500).send();
+    res.status(HTTP_STATUS.SERVER_ERROR).send();
   }
 });
 
@@ -63,13 +65,32 @@ app.post('/register', async (req: Request, res: Response, next) => {
     if (username && password) {
       const result = await createAccount({ username, password });
       if (result) {
-        res.status(200).send({ success: true });
+        res.status(HTTP_STATUS.OK).send({ success: true });
       }
     }
   } catch (e) {
-    res.status(500).send();
+    console.error(e);
+    res.status(HTTP_STATUS.SERVER_ERROR).send();
   }
-  res.status(400).send({ success: false });
+  throw new HttpError(HTTP_STATUS.BAD_REQUEST, 'invalid username or password', {});
+});
+
+app.post('/token', async (req: Request, res: Response, next) => {
+  try{
+    const payload = req.body;
+    const { grant_type, refresh_token } : { grant_type: GrantType, refresh_token: string } = payload;
+    const { refreshToken } = services;
+
+    if (grant_type === GrantType.refresh_token) {
+      res.status(HTTP_STATUS.OK).send(refreshToken(refresh_token));
+    } else {
+      // throw new HttpError(HTTP_STATUS.BAD_REQUEST, 'invalid grant_type', { payload });
+      res.status(HTTP_STATUS.BAD_REQUEST).send('invalid grant_type');
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(HTTP_STATUS.SERVER_ERROR).send();
+  }
 });
 
 app.listen(PORT, () => {
