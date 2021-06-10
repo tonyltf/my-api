@@ -7,7 +7,6 @@ import { BasicStrategy } from 'passport-http';
 import morgan from 'morgan';
 
 import config from '../lib/config';
-import { getUser } from '../lib/db/users';
 import services from './services';
 import { GrantType, HTTP_STATUS } from '../lib/constant';
 import { HttpError } from '../lib/error';
@@ -26,7 +25,8 @@ app.use(session({ secret: 'cats' }));
 passport.use(
   new BasicStrategy(async (username: string, password: string, done: Function) => {
     try {
-      const result: any = await getUser({ username, password });
+      const { validateUser } = services;
+      const result: any = await validateUser({ username, password });
       if (result) {
         return done(null, { uid: result.uid });
       }
@@ -47,7 +47,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.post('/login', passport.authenticate('basic', { successRedirect: '/loggedIn' }));
-
 app.get('/loggedIn', passport.authenticate('basic', { session: false }), (req: Request, res: Response, next) => {
   try{
     const payload = req.user;
@@ -71,8 +70,8 @@ app.post('/register', async (req: Request, res: Response, next) => {
   } catch (e) {
     console.error(e);
     res.status(HTTP_STATUS.SERVER_ERROR).send();
+    // throw new HttpError(HTTP_STATUS.BAD_REQUEST, 'invalid username or password', {});
   }
-  throw new HttpError(HTTP_STATUS.BAD_REQUEST, 'invalid username or password', {});
 });
 
 app.post('/token', async (req: Request, res: Response, next) => {

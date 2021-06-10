@@ -11,7 +11,7 @@ export default {
   DB: {
     CLIENT: env.DB_CLIENT || 'pg',
     VERSION: env.DB_VERSION || '13.3',
-    HOST: env.DB_HOST || '172.17.0.2',
+    HOST: env.DB_HOST || '172.17.0.3',
     USER: env.DB_USER || 'postgres',
     PASSWORD: env.DB_PASSWORD || 'password',
     NAME: env.DB_NAME || 'mydb',
