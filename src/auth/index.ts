@@ -9,7 +9,7 @@ import morgan from 'morgan';
 import config from '../lib/config';
 import services from './services';
 import { GrantType, HTTP_STATUS } from '../lib/constant';
-import { HttpError } from '../lib/error';
+import logger from '../lib/logger';
 
 const PORT = config.AUTH_PORT;
 
@@ -26,12 +26,12 @@ passport.use(
   new BasicStrategy(async (username: string, password: string, done: Function) => {
     try {
       const { validateUser } = services;
-      const result: any = await validateUser({ username, password });
+      const result: any =  await validateUser({ username, password });
       if (result) {
         return done(null, { uid: result.uid });
       }
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     }
     return done(null, false, { message: 'Invalid username or password.' });
   })
@@ -68,9 +68,8 @@ app.post('/register', async (req: Request, res: Response, next) => {
       }
     }
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(HTTP_STATUS.SERVER_ERROR).send();
-    // throw new HttpError(HTTP_STATUS.BAD_REQUEST, 'invalid username or password', {});
   }
 });
 
@@ -87,11 +86,11 @@ app.post('/token', async (req: Request, res: Response, next) => {
       res.status(HTTP_STATUS.BAD_REQUEST).send('invalid grant_type');
     }
   } catch (e) {
-    console.error(e);
+    logger.error(e);
     res.status(HTTP_STATUS.SERVER_ERROR).send();
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Listening to port ${PORT}`);
+  logger.info(`Listening to port ${PORT}`);
 });

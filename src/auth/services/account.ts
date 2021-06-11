@@ -16,8 +16,8 @@ const AccountService = ({ logger }: { logger: any }) => {
 
         bcrypt.hash(user.password, saltRounds, async function(err, hash) {
           if (err) {
-            logger.error(e);
-            throw new Error(e);
+            logger.error(err);
+            throw new Error();
           }
           const result: IUserId = await createUser({ ...user, password: hash });
           resolve(result?.uid);

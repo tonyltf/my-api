@@ -25,6 +25,6 @@ export default {
     TOKEN_TYPE: env.TOKEN_TYPE || 'Bearer',
   },
 
-  PORT: env.PORT || 8000,
-  AUTH_PORT: env.AUTH_PORT || 8001,
+  PORT: env.PORT || 3000,
+  AUTH_PORT: env.AUTH_PORT || 3000,
 };
