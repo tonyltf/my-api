@@ -20,7 +20,12 @@ app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.static('public'));
-app.use(session({ secret: 'cats' }));
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
+})); 
 
 passport.use(
   new BasicStrategy(async (username: string, password: string, done: Function) => {
