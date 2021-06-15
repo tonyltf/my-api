@@ -42,10 +42,7 @@ passport.use(
   })
 );
 
-passport.serializeUser((user: any, done) => {
-  done(null, user);
-});
-
+passport.serializeUser((user: any, done) => done(null, user));
 passport.deserializeUser((user: any, done) => done(null, user));
 
 app.use(passport.initialize());
@@ -70,7 +67,7 @@ app.post('/register', async (req: Request, res: Response, next) => {
       const result = await createAccount({ username, password });
       if (result) {
         res.status(HTTP_STATUS.OK).send({ success: true });
-      }
+      } 
     }
   } catch (e) {
     logger.error(e);
